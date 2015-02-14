@@ -1,0 +1,88 @@
+---
+title: "Ejercicio Histograma"
+author: "Gerardo Luna Lopez 135562
+        Elisa Casares  137843
+        María José García 135964"
+date: "Friday, February 13, 2015"
+output: html_document
+---
+
+```{r}
+setwd("/Users/elisacasares/Desktop")
+TCambio <- read.table("./tipoCambioBanxico.txt",
+                      sep = "|",
+                      header = TRUE,
+                      stringsAsFactors = FALSE)
+```
+
+
+```{r Transformaci??n a Fecha}
+TCambio$Fecha.DOF <- as.Date(TCambio$Fecha.DOF,
+                             format = "%d/%m/%Y")
+temporal <- as.POSIXlt(TCambio$Fecha.DOF)
+TCambio$anio <- unclass(temporal)$year+1900
+ 
+TCambio.exist <- subset(TCambio, TC != "N/E")
+TCambio.exist$TC <- as.numeric(TCambio.exist$TC)
+```
+ 
+```{r Histogramas}
+par(mfrow = c(3, 3))
+for(i in 2006:2014){
+  tc <- subset(TCambio.exist, anio == i)
+  hist(tc$TC,
+       col = "blue",
+       breaks = seq(9.9, 15.4, length.out = 30),
+       xlim = c(9.9, 15.4),
+       ylim = c(0, 120),
+       main = i,
+       xlab = "Tipo de cambio")
+  media <- mean(tc$TC, na.rm = TRUE)
+  mediana <- median(tc$TC, na.rm = TRUE)
+  abline(v = media, col = "red", lwd = 3)
+  abline(v = mediana, col = "black", lwd = 3)
+  }
+```
+ 
+ 3.  
+    En el 2006 la mediana y la media son prácticamente iguales por lo que la distribución es simétrica; el tipo de cambio en promedio en estos dos años fue de 11 pesos. En el 2008, la mayor parte del tiempo el tipo de cambio estuvo entre 10 y 11 pesos, aunque también aumentó a un valor entre 13 y 14 pesos, en este año hay un sesgo a la izquierda.
+  En el año 2009 pasa algo muy similar, con la diferencia de que el tipo de cambio se concentra entre 13 y 14 pesos, igual hay un sesgo a la izquierda. El 2010 vuelve a ser un año simétrico, en donde la media y la mediana se encuentran alrededor de 12.7 pesos.
+  El año 2011 presenta sesgo a la izquierda, la mayor parte del tiempo, el tipo de cambio estuvo entre 11.5 y 12.5 aunque se presenta una gran fluctuación donde el tipo de cambio llega hasta los 14 pesos.
+  En los años 2012 y 2013, el tipo de cambio fluctuó pero muy ligeramente con media y mediana alrededor de 13 pesos. El año pasado, fue el año en el que el tipo de cambio fluctuó menos, la mayor parte del tiempo se mantuvo en 13 pesos (aunque esto puede ser debido a que se realizaron menos observaciones).
+ 
+```{r Diagramas de caja}
+par(mfrow = c(3,3))
+for(i in 2006:2014){
+  tc <- subset(TCambio.exist, anio == i)
+  boxplot(tc$TC,
+          range = 0,
+          varwidth = TRUE)
+}
+```
+
+5. 
+  En el año 2006 y en el 2007, el tipo de cambio no fluctuó mucho porque se mantuvo entre [10.4,11.2] y [10.7,11.2] reispectivamente, también podemos ver como en
+estos dos años, el comportamiento fue simétrico. En el año 2008, a pesar de que hubo fluctuaciones entre [10,14], la mayor parte del tiempo se mantuvo
+entre 10 y 11 pesos. En el 2009 el tipo de cambio fluctuó entre [12.5,14.5] y la mayor parte del tiempo se mantuvo alrededor de 13 pesos.
+  En el año 2010 fue simétrico con una mediana en 12.5 y poca fluctuación entre [12.2,13]. En el 2011, podemos ver que el 50% de los diferentes tipos de cambio se encontró entre [11.5,11.8], sin embargo el otro 50% fluctuó entre [11.8,13.5]. En 2012 y 2013 se concentró en 13 pesos sin embargo, en el 2012 fluctuó más a valores mayores de 13 y en el 2013 a valores menores a 13.
+  En el año 2014, fluctuó únicamente entre [12.9,13.4] y la mayor parte del tiempo se concentró en 13.
+
+  Como podemos ver, el análisis de los histogramas es muy silimilar al análisis de las dropbox, sin embargo el histograma nos puede dar una mejor precision sobre que tipo de cambio hubo a lo largo del año, ya que el histograma nos muestra el número de veces que aparecio el dato.
+  En promedio el tipo de cambio ha ido en aumento a lo largo de estos 9 años, empezando en 11 en el 2006 hasta llegar a 13 en el 2014, sin embargo a lo largo de cada año el tipo de cambio fluctuó alcanzando niveles altos como en el 2008 
+  En conclusion podemos ver como el tipo de cambio puede llegar a variar mucho a lo largo del año pero hay una tendencia a subir a traves del tiempo. 
+
+```{r}
+x<-c(-4:4)
+curve(((1/((2*pi)^(1/2)))*(exp(-(x^2)/2))),
+      from = -4, to = 4, 
+      xlab = "x", 
+      ylab = "f(x)", 
+      add = FALSE, 
+      col = "red", 
+      main = paste(" Grafica de la funcion"))
+      abline(v=0, col = "black", lwd = 1)
+points(x=0, y = max(((1/((2*pi)^(1/2)))*(exp(-(x^2)/2)))), 
+       col = "blue", pch=19)
+text(x=1.5, y = max(((1/((2*pi)^(1/2)))*(exp(-(x^2)/2)))), 
+     labels= "Valor maximo")
+```
